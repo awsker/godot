@@ -229,7 +229,8 @@ private:
 
 	Rect2 last_vp_rect;
 
-	bool transparent_bg = false;
+	bool override_clear_color;
+	Color clear_color;
 	bool gen_mipmaps = false;
 
 	bool snap_controls_to_pixels = true;
@@ -495,8 +496,10 @@ public:
 
 	Transform2D get_final_transform() const;
 
-	void set_transparent_background(bool p_enable);
-	bool has_transparent_background() const;
+	void set_clear_color_override(bool p_enable);
+	void set_clear_color(Color p_color);
+	bool is_clear_color_override_enabled();
+	Color get_clear_color();
 
 	Ref<ViewportTexture> get_texture() const;
 
