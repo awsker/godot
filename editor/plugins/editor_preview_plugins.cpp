@@ -351,7 +351,8 @@ EditorMaterialPreviewPlugin::EditorMaterialPreviewPlugin() {
 	RS::get_singleton()->viewport_set_update_mode(viewport, RS::VIEWPORT_UPDATE_DISABLED);
 	RS::get_singleton()->viewport_set_scenario(viewport, scenario);
 	RS::get_singleton()->viewport_set_size(viewport, 128, 128);
-	RS::get_singleton()->viewport_set_transparent_background(viewport, true);
+	RS::get_singleton()->viewport_set_clear_color_override(viewport, true);
+	RS::get_singleton()->viewport_set_clear_color(viewport, Color(0.0, 0.0, 0.0, 0.0));
 	RS::get_singleton()->viewport_set_active(viewport, true);
 	viewport_texture = RS::get_singleton()->viewport_get_texture(viewport);
 
@@ -761,7 +762,8 @@ EditorMeshPreviewPlugin::EditorMeshPreviewPlugin() {
 	RS::get_singleton()->viewport_set_update_mode(viewport, RS::VIEWPORT_UPDATE_DISABLED);
 	RS::get_singleton()->viewport_set_scenario(viewport, scenario);
 	RS::get_singleton()->viewport_set_size(viewport, 128, 128);
-	RS::get_singleton()->viewport_set_transparent_background(viewport, true);
+	RS::get_singleton()->viewport_set_clear_color_override(viewport, true);
+	RS::get_singleton()->viewport_set_clear_color(viewport, Color(0.0, 0.0, 0.0, 0.0));
 	RS::get_singleton()->viewport_set_active(viewport, true);
 	viewport_texture = RS::get_singleton()->viewport_get_texture(viewport);
 

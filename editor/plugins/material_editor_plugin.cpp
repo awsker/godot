@@ -150,7 +150,8 @@ MaterialEditor::MaterialEditor() {
 	viewport->set_world_3d(world_3d); //use own world
 	vc->add_child(viewport);
 	viewport->set_disable_input(true);
-	viewport->set_transparent_background(true);
+	viewport->set_clear_color_override(true);
+	viewport->set_clear_color(Color(0.0, 0.0, 0.0, 0.0));
 	viewport->set_msaa(Viewport::MSAA_4X);
 
 	camera = memnew(Camera3D);

@@ -965,13 +965,22 @@ void Viewport::_canvas_layer_remove(CanvasLayer *p_canvas_layer) {
 	canvas_layers.erase(p_canvas_layer);
 }
 
-void Viewport::set_transparent_background(bool p_enable) {
-	transparent_bg = p_enable;
-	RS::get_singleton()->viewport_set_transparent_background(viewport, p_enable);
+void Viewport::set_clear_color_override(bool p_enable) {
+	override_clear_color = p_enable;
+	RS::get_singleton()->viewport_set_clear_color_override(viewport, p_enable);
 }
 
-bool Viewport::has_transparent_background() const {
-	return transparent_bg;
+void Viewport::set_clear_color(Color p_color) {
+	clear_color = p_color;
+	RS::get_singleton()->viewport_set_clear_color(viewport, p_color);
+}
+
+bool Viewport::is_clear_color_override_enabled() {
+	return override_clear_color;
+}
+
+Color Viewport::get_clear_color() {
+	return clear_color;
 }
 
 void Viewport::set_world_2d(const Ref<World2D> &p_world_2d) {
@@ -3623,8 +3632,10 @@ void Viewport::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_final_transform"), &Viewport::get_final_transform);
 
 	ClassDB::bind_method(D_METHOD("get_visible_rect"), &Viewport::get_visible_rect);
-	ClassDB::bind_method(D_METHOD("set_transparent_background", "enable"), &Viewport::set_transparent_background);
-	ClassDB::bind_method(D_METHOD("has_transparent_background"), &Viewport::has_transparent_background);
+	ClassDB::bind_method(D_METHOD("set_clear_color_override", "enable"), &Viewport::set_clear_color_override);
+	ClassDB::bind_method(D_METHOD("is_clear_color_override_enabled"), &Viewport::is_clear_color_override_enabled);
+	ClassDB::bind_method(D_METHOD("set_clear_color", "color"), &Viewport::set_clear_color);
+	ClassDB::bind_method(D_METHOD("get_clear_color"), &Viewport::get_clear_color);
 
 	ClassDB::bind_method(D_METHOD("set_msaa", "msaa"), &Viewport::set_msaa);
 	ClassDB::bind_method(D_METHOD("get_msaa"), &Viewport::get_msaa);
@@ -3753,7 +3764,8 @@ void Viewport::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "world_3d", PROPERTY_HINT_RESOURCE_TYPE, "World3D"), "set_world_3d", "get_world_3d");
 #endif // _3D_DISABLED
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "world_2d", PROPERTY_HINT_RESOURCE_TYPE, "World2D", PROPERTY_USAGE_NONE), "set_world_2d", "get_world_2d");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transparent_bg"), "set_transparent_background", "has_transparent_background");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "override_clear_color"), "set_clear_color_override", "is_clear_color_override_enabled");
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "clear_color"), "set_clear_color", "get_clear_color");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "handle_input_locally"), "set_handle_input_locally", "is_handling_input_locally");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_2d_transforms_to_pixel"), "set_snap_2d_transforms_to_pixel", "is_snap_2d_transforms_to_pixel_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_2d_vertices_to_pixel"), "set_snap_2d_vertices_to_pixel", "is_snap_2d_vertices_to_pixel_enabled");
