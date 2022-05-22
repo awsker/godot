@@ -106,7 +106,8 @@ public:
 		RS::CanvasItemTextureFilter texture_filter = RS::CANVAS_ITEM_TEXTURE_FILTER_LINEAR;
 		RS::CanvasItemTextureRepeat texture_repeat = RS::CANVAS_ITEM_TEXTURE_REPEAT_DISABLED;
 
-		bool transparent_bg;
+		bool override_clear_color;
+		Color clear_color;
 
 		struct CanvasKey {
 			int64_t stacking;
@@ -144,7 +145,8 @@ public:
 		Viewport() {
 			update_mode = RS::VIEWPORT_UPDATE_WHEN_VISIBLE;
 			clear_mode = RS::VIEWPORT_CLEAR_ALWAYS;
-			transparent_bg = false;
+			override_clear_color = false;
+			clear_color = Color(0.0, 0.0, 0.0, 0.0);
 
 			viewport_to_screen = DisplayServer::INVALID_WINDOW_ID;
 			shadow_atlas_size = 0;
@@ -242,7 +244,8 @@ public:
 	void viewport_attach_canvas(RID p_viewport, RID p_canvas);
 	void viewport_remove_canvas(RID p_viewport, RID p_canvas);
 	void viewport_set_canvas_transform(RID p_viewport, RID p_canvas, const Transform2D &p_offset);
-	void viewport_set_transparent_background(RID p_viewport, bool p_enabled);
+	void viewport_set_clear_color_override(RID p_viewport, bool p_enabled);
+	void viewport_set_clear_color(RID p_viewport, Color p_color);
 
 	void viewport_set_global_canvas_transform(RID p_viewport, const Transform2D &p_transform);
 	void viewport_set_canvas_stacking(RID p_viewport, RID p_canvas, int p_layer, int p_sublayer);

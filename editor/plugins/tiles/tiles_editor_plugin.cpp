@@ -80,7 +80,8 @@ void TilesEditorPlugin::_thread() {
 				SubViewport *viewport = memnew(SubViewport);
 				viewport->set_size(thumbnail_size2);
 				viewport->set_disable_input(true);
-				viewport->set_transparent_background(true);
+				viewport->set_clear_color_override(true);
+				viewport->set_clear_color(Color(0.0, 0.0, 0.0, 0.0));
 				viewport->set_update_mode(SubViewport::UPDATE_ONCE);
 
 				TileMap *tile_map = memnew(TileMap);

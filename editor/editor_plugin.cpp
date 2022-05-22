@@ -72,7 +72,8 @@ Vector<Ref<Texture2D>> EditorInterface::make_mesh_previews(const Vector<Ref<Mesh
 	RS::get_singleton()->viewport_set_update_mode(viewport, RS::VIEWPORT_UPDATE_ALWAYS);
 	RS::get_singleton()->viewport_set_scenario(viewport, scenario);
 	RS::get_singleton()->viewport_set_size(viewport, size, size);
-	RS::get_singleton()->viewport_set_transparent_background(viewport, true);
+	RS::get_singleton()->viewport_set_clear_color_override(viewport, true);
+	RS::get_singleton()->viewport_set_clear_color(viewport, Color(0.0, 0.0, 0.0, 0.0));
 	RS::get_singleton()->viewport_set_active(viewport, true);
 	RID viewport_texture = RS::get_singleton()->viewport_get_texture(viewport);
 

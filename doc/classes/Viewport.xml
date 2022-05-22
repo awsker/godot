@@ -270,8 +270,11 @@
 		</member>
 		<member name="snap_2d_vertices_to_pixel" type="bool" setter="set_snap_2d_vertices_to_pixel" getter="is_snap_2d_vertices_to_pixel_enabled" default="false">
 		</member>
-		<member name="transparent_bg" type="bool" setter="set_transparent_background" getter="has_transparent_background" default="false">
-			If [code]true[/code], the viewport should render its background as transparent.
+		<member name="override_clear_color" type="bool" setter="set_clear_color_override" getter="is_clear_color_override_enabled" default="false">
+			If [code]true[/code], the color specified in [member clear_color] is used to clear the viewport, instead of the environment clear color.
+		</member>
+		<member name="clear_color" type="Color" setter="set_clear_color" getter="get_clear_color" default="Color(0.0, 0.0, 0.0, 0.0)">
+			The color used to clear the viewport. This is only used if [member override_clear_color] is enabled.
 		</member>
 		<member name="use_debanding" type="bool" setter="set_use_debanding" getter="is_using_debanding" default="false">
 		</member>

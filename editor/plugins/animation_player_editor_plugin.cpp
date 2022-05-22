@@ -1198,7 +1198,10 @@ void AnimationPlayerEditor::_allocate_onion_layers() {
 
 		RS::get_singleton()->viewport_set_size(onion.captures[i], capture_size.width, capture_size.height);
 		RS::get_singleton()->viewport_set_update_mode(onion.captures[i], RS::VIEWPORT_UPDATE_ALWAYS);
-		RS::get_singleton()->viewport_set_transparent_background(onion.captures[i], !is_present);
+		if (!is_present) {
+			RS::get_singleton()->viewport_set_clear_color_override(onion.captures[i], true);
+			RS::get_singleton()->viewport_set_clear_color(onion.captures[i], Color(0.0, 0.0, 0.0, 0.0));
+		}
 		RS::get_singleton()->viewport_attach_canvas(onion.captures[i], onion.capture.canvas);
 	}
 
