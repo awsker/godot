@@ -226,7 +226,7 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 	}
 
 	if (!p_viewport->disable_2d) {
-		RBMap<Viewport::CanvasKey, Viewport::CanvasData *> canvas_map;
+		Map<Viewport::CanvasKey, Viewport::CanvasData *> canvas_map;
 
 		Rect2 clip_rect(0, 0, p_viewport->size.x, p_viewport->size.y);
 		RendererCanvasRender::Light *lights = nullptr;
@@ -247,15 +247,15 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 				RendererCanvasCull::Canvas *canvas = static_cast<RendererCanvasCull::Canvas *>(E.value.canvas);
 				Transform2D xf = _canvas_get_transform(p_viewport, canvas, &E.value, clip_rect.size);
 
-				for (RendererCanvasRender::LightOccluderInstance *F : canvas->occluders) {
-					if (!F->enabled) {
+				for (Set<RendererCanvasRender::LightOccluderInstance *>::Element *F = canvas->occluders.front(); F; F = F->next()) {
+					if (!F->get()->enabled) {
 						continue;
 					}
-					F->xform_cache = xf * F->xform;
+					F->get()->xform_cache = xf * F->get()->xform;
 
-					if (sdf_rect.intersects_transformed(F->xform_cache, F->aabb_cache)) {
-						F->next = occluders;
-						occluders = F;
+					if (sdf_rect.intersects_transformed(F->get()->xform_cache, F->get()->aabb_cache)) {
+						F->get()->next = occluders;
+						occluders = F->get();
 					}
 				}
 			}
@@ -281,8 +281,8 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 
 			// Find lights in canvas.
 
-			for (RendererCanvasRender::Light *F : canvas->lights) {
-				RendererCanvasRender::Light *cl = F;
+			for (Set<RendererCanvasRender::Light *>::Element *F = canvas->lights.front(); F; F = F->next()) {
+				RendererCanvasRender::Light *cl = F->get();
 				if (cl->enabled && cl->texture.is_valid()) {
 					//not super efficient..
 					Size2 tsize = RSG::texture_storage->texture_size_with_proxy(cl->texture);
@@ -313,8 +313,8 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 				}
 			}
 
-			for (RendererCanvasRender::Light *F : canvas->directional_lights) {
-				RendererCanvasRender::Light *cl = F;
+			for (Set<RendererCanvasRender::Light *>::Element *F = canvas->directional_lights.front(); F; F = F->next()) {
+				RendererCanvasRender::Light *cl = F->get();
 				if (cl->enabled) {
 					cl->filter_next_ptr = directional_lights;
 					directional_lights = cl;
@@ -349,14 +349,14 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 				RendererCanvasCull::Canvas *canvas = static_cast<RendererCanvasCull::Canvas *>(E.value.canvas);
 				Transform2D xf = _canvas_get_transform(p_viewport, canvas, &E.value, clip_rect.size);
 
-				for (RendererCanvasRender::LightOccluderInstance *F : canvas->occluders) {
-					if (!F->enabled) {
+				for (Set<RendererCanvasRender::LightOccluderInstance *>::Element *F = canvas->occluders.front(); F; F = F->next()) {
+					if (!F->get()->enabled) {
 						continue;
 					}
-					F->xform_cache = xf * F->xform;
-					if (shadow_rect.intersects_transformed(F->xform_cache, F->aabb_cache)) {
-						F->next = occluders;
-						occluders = F;
+					F->get()->xform_cache = xf * F->get()->xform;
+					if (shadow_rect.intersects_transformed(F->get()->xform_cache, F->get()->aabb_cache)) {
+						F->get()->next = occluders;
+						occluders = F->get();
 					}
 				}
 			}
@@ -429,19 +429,19 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 					RendererCanvasCull::Canvas *canvas = static_cast<RendererCanvasCull::Canvas *>(E.value.canvas);
 					Transform2D xf = _canvas_get_transform(p_viewport, canvas, &E.value, clip_rect.size);
 
-					for (RendererCanvasRender::LightOccluderInstance *F : canvas->occluders) {
-						if (!F->enabled) {
+					for (Set<RendererCanvasRender::LightOccluderInstance *>::Element *F = canvas->occluders.front(); F; F = F->next()) {
+						if (!F->get()->enabled) {
 							continue;
 						}
-						F->xform_cache = xf * F->xform;
-						Transform2D localizer = F->xform_cache.affine_inverse();
+						F->get()->xform_cache = xf * F->get()->xform;
+						Transform2D localizer = F->get()->xform_cache.affine_inverse();
 
 						for (int j = 0; j < point_count; j++) {
 							xf_points[j] = localizer.xform(points[j]);
 						}
-						if (F->aabb_cache.intersects_filled_polygon(xf_points, point_count)) {
-							F->next = occluders;
-							occluders = F;
+						if (F->get()->aabb_cache.intersects_filled_polygon(xf_points, point_count)) {
+							F->get()->next = occluders;
+							occluders = F->get();
 						}
 					}
 				}
@@ -454,7 +454,7 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 			RENDER_TIMESTAMP("< Render DirectionalLight2D Shadows");
 		}
 
-		if (scenario_draw_canvas_bg && canvas_map.begin() && canvas_map.begin()->key.get_layer() > scenario_canvas_max_layer) {
+		if (scenario_draw_canvas_bg && canvas_map.front() && canvas_map.front()->key().get_layer() > scenario_canvas_max_layer) {
 			if (!can_draw_3d) {
 				RSG::scene->render_empty_scene(p_viewport->render_buffers, p_viewport->scenario, p_viewport->shadow_atlas);
 			} else {
@@ -547,7 +547,7 @@ void RendererViewport::draw_viewports() {
 	//sort viewports
 	active_viewports.sort_custom<ViewportSort>();
 
-	HashMap<DisplayServer::WindowID, Vector<BlitToScreen>> blit_to_screen_list;
+	Map<DisplayServer::WindowID, Vector<BlitToScreen>> blit_to_screen_list;
 	//draw viewports
 	RENDER_TIMESTAMP("> Render Viewports");
 
@@ -980,7 +980,7 @@ void RendererViewport::viewport_set_clear_color_override(RID p_viewport, bool p_
 	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
 	ERR_FAIL_COND(!viewport);
 
-	bool transparent = p_enabled && viewport->clear_color.a <= 0.0;
+	bool transparent = p_enabled && viewport->clear_color.a < 1.0;
 	RSG::texture_storage->render_target_set_flag(viewport->render_target, RendererTextureStorage::RENDER_TARGET_TRANSPARENT, transparent);
 	viewport->override_clear_color = p_enabled;
 }
@@ -989,7 +989,7 @@ void RendererViewport::viewport_set_clear_color(RID p_viewport, Color p_color) {
 	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
 	ERR_FAIL_COND(!viewport);
 
-	bool transparent = viewport->override_clear_color && p_color.a <= 0.0;
+	bool transparent = viewport->override_clear_color && p_color.a < 1.0;
 	RSG::texture_storage->render_target_set_flag(viewport->render_target, RendererTextureStorage::RENDER_TARGET_TRANSPARENT, transparent);
 	viewport->clear_color = p_color;
 }
@@ -1186,8 +1186,8 @@ bool RendererViewport::free(RID p_rid) {
 			RSG::scene->free(viewport->render_buffers);
 		}
 
-		while (viewport->canvas_map.begin()) {
-			viewport_remove_canvas(p_rid, viewport->canvas_map.begin()->key);
+		while (viewport->canvas_map.front()) {
+			viewport_remove_canvas(p_rid, viewport->canvas_map.front()->key());
 		}
 
 		viewport_set_scenario(p_rid, RID());

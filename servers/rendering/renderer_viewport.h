@@ -138,7 +138,7 @@ public:
 
 		Transform2D global_transform;
 
-		HashMap<RID, CanvasData> canvas_map;
+		Map<RID, CanvasData> canvas_map;
 
 		RendererScene::RenderInfo render_info;
 
@@ -146,6 +146,7 @@ public:
 			update_mode = RS::VIEWPORT_UPDATE_WHEN_VISIBLE;
 			clear_mode = RS::VIEWPORT_CLEAR_ALWAYS;
 			override_clear_color = false;
+			clear_color = Color(0.0, 0.0, 0.0, 0.0);
 
 			viewport_to_screen = DisplayServer::INVALID_WINDOW_ID;
 			shadow_atlas_size = 0;

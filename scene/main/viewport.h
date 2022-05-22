@@ -203,7 +203,7 @@ private:
 
 	AudioListener2D *audio_listener_2d = nullptr;
 	Camera2D *camera_2d = nullptr;
-	HashSet<CanvasLayer *> canvas_layers;
+	Set<CanvasLayer *> canvas_layers;
 
 	RID viewport;
 	RID current_canvas;
@@ -259,9 +259,9 @@ private:
 	bool local_input_handled = false;
 
 	// Collider to frame
-	HashMap<ObjectID, uint64_t> physics_2d_mouseover;
+	Map<ObjectID, uint64_t> physics_2d_mouseover;
 	// Collider & shape to frame
-	HashMap<Pair<ObjectID, int>, uint64_t, PairHash<ObjectID, int>> physics_2d_shape_mouseover;
+	Map<Pair<ObjectID, int>, uint64_t, PairSort<ObjectID, int>> physics_2d_shape_mouseover;
 	// Cleans up colliders corresponding to old frames or all of them.
 	void _cleanup_mouseover_colliders(bool p_clean_all_frames, bool p_paused_only, uint64_t p_frame_reference = 0);
 
@@ -302,7 +302,7 @@ private:
 	bool use_occlusion_culling = false;
 
 	Ref<ViewportTexture> default_texture;
-	HashSet<ViewportTexture *> viewport_textures;
+	Set<ViewportTexture *> viewport_textures;
 
 	SDFOversize sdf_oversize = SDF_OVERSIZE_120_PERCENT;
 	SDFScale sdf_scale = SDF_SCALE_50_PERCENT;
@@ -382,7 +382,7 @@ private:
 
 	bool disable_input = false;
 
-	bool _gui_call_input(Control *p_control, const Ref<InputEvent> &p_input);
+	void _gui_call_input(Control *p_control, const Ref<InputEvent> &p_input);
 	void _gui_call_notification(Control *p_control, int p_what);
 
 	void _gui_sort_roots();
@@ -498,8 +498,8 @@ public:
 
 	void set_clear_color_override(bool p_enable);
 	void set_clear_color(Color p_color);
-	bool is_clear_color_override_enabled();
-	Color get_clear_color();
+	bool is_clear_color_override_enabled() const;
+	Color get_clear_color() const;
 
 	Ref<ViewportTexture> get_texture() const;
 
@@ -618,7 +618,7 @@ public:
 	bool use_xr = false;
 	friend class AudioListener3D;
 	AudioListener3D *audio_listener_3d = nullptr;
-	HashSet<AudioListener3D *> audio_listener_3d_set;
+	Set<AudioListener3D *> audio_listener_3d_set;
 	bool is_audio_listener_3d_enabled = false;
 	RID internal_audio_listener_3d;
 	AudioListener3D *get_audio_listener_3d() const;
@@ -653,7 +653,7 @@ public:
 
 	friend class Camera3D;
 	Camera3D *camera_3d = nullptr;
-	HashSet<Camera3D *> camera_3d_set;
+	Set<Camera3D *> camera_3d_set;
 	Camera3D *get_camera_3d() const;
 	void _camera_3d_transform_changed_notify();
 	void _camera_3d_set(Camera3D *p_camera);
@@ -718,7 +718,7 @@ private:
 protected:
 	static void _bind_methods();
 	virtual DisplayServer::WindowID get_window_id() const override;
-	Transform2D _stretch_transform();
+	Transform2D _stretch_transform(const Size2i &p_size, const Size2i &p_view_size_2d_override);
 	void _notification(int p_what);
 
 public:
