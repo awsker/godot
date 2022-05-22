@@ -1007,7 +1007,7 @@ void RendererViewport::viewport_set_clear_color(RID p_viewport, Color p_color) {
 
 	bool transparent = viewport->override_clear_color && p_color.a < 1.0;
 	RSG::texture_storage->render_target_set_transparent(viewport->render_target, transparent);
-	viewport->transparent_bg = p_enabled;
+	viewport->clear_color = p_color;
 }
 
 void RendererViewport::viewport_set_global_canvas_transform(RID p_viewport, const Transform2D &p_transform) {
