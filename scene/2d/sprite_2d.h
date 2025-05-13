@@ -34,7 +34,6 @@
 #include "scene/resources/atlas_texture.h"
 #include "scene/resources/texture.h"
 
-
 class Sprite2D : public Node2D {
 	GDCLASS(Sprite2D, Node2D);
 
