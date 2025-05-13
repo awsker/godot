@@ -3909,7 +3909,7 @@
 			</description>
 		</method>
 		<method name="viewport_get_size">
-			<return type="Size2i" />
+			<return type="Vector2" />
 			<param index="0" name="viewport" type="RID" />
 			<description>
 				Gets the viewport's width and height in pixels.
