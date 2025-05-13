@@ -579,15 +579,6 @@ public:
 	void set_msaa_2d(MSAA p_msaa);
 	MSAA get_msaa_2d() const;
 
-	void set_msaa_3d(MSAA p_msaa);
-	MSAA get_msaa_3d() const;
-
-	void set_screen_space_aa(ScreenSpaceAA p_screen_space_aa);
-	ScreenSpaceAA get_screen_space_aa() const;
-
-	void set_use_taa(bool p_use_taa);
-	bool is_using_taa() const;
-
 	void set_use_oversampling(bool p_oversampling);
 	bool is_using_oversampling() const;
 
@@ -596,29 +587,8 @@ public:
 
 	float get_oversampling() const { return font_oversampling; }
 
-	void set_scaling_3d_mode(Scaling3DMode p_scaling_3d_mode);
-	Scaling3DMode get_scaling_3d_mode() const;
-
-	void set_scaling_3d_scale(float p_scaling_3d_scale);
-	float get_scaling_3d_scale() const;
-
-	void set_fsr_sharpness(float p_fsr_sharpness);
-	float get_fsr_sharpness() const;
-
-	void set_texture_mipmap_bias(float p_texture_mipmap_bias);
-	float get_texture_mipmap_bias() const;
-
 	void set_anisotropic_filtering_level(AnisotropicFiltering p_anisotropic_filtering_level);
 	AnisotropicFiltering get_anisotropic_filtering_level() const;
-
-	void set_use_debanding(bool p_use_debanding);
-	bool is_using_debanding() const;
-
-	void set_mesh_lod_threshold(float p_pixels);
-	float get_mesh_lod_threshold() const;
-
-	void set_use_occlusion_culling(bool p_us_occlusion_culling);
-	bool is_using_occlusion_culling() const;
 
 	Vector2 get_camera_coords(const Vector2 &p_viewport_coords) const;
 	Vector2 get_camera_rect_size() const;
@@ -703,17 +673,6 @@ public:
 	void set_default_canvas_item_texture_repeat(DefaultCanvasItemTextureRepeat p_repeat);
 	DefaultCanvasItemTextureRepeat get_default_canvas_item_texture_repeat() const;
 
-	// VRS
-
-	void set_vrs_mode(VRSMode p_vrs_mode);
-	VRSMode get_vrs_mode() const;
-
-	void set_vrs_update_mode(VRSUpdateMode p_vrs_update_mode);
-	VRSUpdateMode get_vrs_update_mode() const;
-
-	void set_vrs_texture(Ref<Texture2D> p_texture);
-	Ref<Texture2D> get_vrs_texture() const;
-
 	virtual DisplayServer::WindowID get_window_id() const = 0;
 
 	void set_embedding_subwindows(bool p_embed);
@@ -775,7 +734,6 @@ public:
 #ifndef _3D_DISABLED
 private:
 	// 3D audio, camera, physics, and world.
-	bool use_xr = false;
 	friend class AudioListener3D;
 	AudioListener3D *audio_listener_3d = nullptr;
 	HashSet<AudioListener3D *> audio_listener_3d_set;
@@ -845,17 +803,12 @@ public:
 	Vector3 camera_3d_override_project_ray_origin(const Point2 &p_pos) const;
 	Vector3 camera_3d_override_project_local_ray_normal(const Point2 &p_pos) const;
 
-	void set_disable_3d(bool p_disable);
-	bool is_3d_disabled() const;
-
 	void set_world_3d(const Ref<World3D> &p_world_3d);
 	Ref<World3D> get_world_3d() const;
 	Ref<World3D> find_world_3d() const;
 	void set_use_own_world_3d(bool p_use_own_world_3d);
 	bool is_using_own_world_3d() const;
 
-	void set_use_xr(bool p_use_xr);
-	bool is_using_xr();
 #endif // _3D_DISABLED
 
 	Viewport();

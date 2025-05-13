@@ -974,7 +974,6 @@ public:
 		return VIEWPORT_SCALING_3D_TYPE_NONE;
 	}
 
-	virtual void viewport_set_use_xr(RID p_viewport, bool p_use_xr) = 0;
 	virtual void viewport_set_size(RID p_viewport, int p_width, int p_height) = 0;
 	virtual Size2i viewport_get_size(RID p_viewport) const = 0;
 	virtual void viewport_set_active(RID p_viewport, bool p_active) = 0;
@@ -984,10 +983,6 @@ public:
 	virtual void viewport_attach_to_screen(RID p_viewport, const Rect2 &p_rect = Rect2(), DisplayServer::WindowID p_screen = DisplayServer::MAIN_WINDOW_ID) = 0;
 	virtual void viewport_set_render_direct_to_screen(RID p_viewport, bool p_enable) = 0;
 
-	virtual void viewport_set_scaling_3d_mode(RID p_viewport, ViewportScaling3DMode p_scaling_3d_mode) = 0;
-	virtual void viewport_set_scaling_3d_scale(RID p_viewport, float p_scaling_3d_scale) = 0;
-	virtual void viewport_set_fsr_sharpness(RID p_viewport, float p_fsr_sharpness) = 0;
-	virtual void viewport_set_texture_mipmap_bias(RID p_viewport, float p_texture_mipmap_bias) = 0;
 	virtual void viewport_set_anisotropic_filtering_level(RID p_viewport, ViewportAnisotropicFiltering p_anisotropic_filtering_level) = 0;
 
 	enum ViewportUpdateMode {
@@ -1019,12 +1014,9 @@ public:
 		VIEWPORT_ENVIRONMENT_MAX,
 	};
 
-	virtual void viewport_set_environment_mode(RID p_viewport, ViewportEnvironmentMode p_mode) = 0;
-	virtual void viewport_set_disable_3d(RID p_viewport, bool p_disable) = 0;
 	virtual void viewport_set_disable_2d(RID p_viewport, bool p_disable) = 0;
 
 	virtual void viewport_attach_camera(RID p_viewport, RID p_camera) = 0;
-	virtual void viewport_set_scenario(RID p_viewport, RID p_scenario) = 0;
 	virtual void viewport_attach_canvas(RID p_viewport, RID p_canvas) = 0;
 	virtual void viewport_remove_canvas(RID p_viewport, RID p_canvas) = 0;
 	virtual void viewport_set_canvas_transform(RID p_viewport, RID p_canvas, const Transform2D &p_offset) = 0;
@@ -1068,7 +1060,6 @@ public:
 		VIEWPORT_MSAA_MAX,
 	};
 
-	virtual void viewport_set_msaa_3d(RID p_viewport, ViewportMSAA p_msaa) = 0;
 	virtual void viewport_set_msaa_2d(RID p_viewport, ViewportMSAA p_msaa) = 0;
 
 	enum ViewportScreenSpaceAA {
@@ -1077,26 +1068,13 @@ public:
 		VIEWPORT_SCREEN_SPACE_AA_MAX,
 	};
 
-	virtual void viewport_set_screen_space_aa(RID p_viewport, ViewportScreenSpaceAA p_mode) = 0;
-
-	virtual void viewport_set_use_taa(RID p_viewport, bool p_use_taa) = 0;
-
-	virtual void viewport_set_use_debanding(RID p_viewport, bool p_use_debanding) = 0;
-
 	virtual void viewport_set_force_motion_vectors(RID p_viewport, bool p_force_motion_vectors) = 0;
-
-	virtual void viewport_set_mesh_lod_threshold(RID p_viewport, float p_pixels) = 0;
-
-	virtual void viewport_set_use_occlusion_culling(RID p_viewport, bool p_use_occlusion_culling) = 0;
-	virtual void viewport_set_occlusion_rays_per_thread(int p_rays_per_thread) = 0;
 
 	enum ViewportOcclusionCullingBuildQuality {
 		VIEWPORT_OCCLUSION_BUILD_QUALITY_LOW = 0,
 		VIEWPORT_OCCLUSION_BUILD_QUALITY_MEDIUM = 1,
 		VIEWPORT_OCCLUSION_BUILD_QUALITY_HIGH = 2,
 	};
-
-	virtual void viewport_set_occlusion_culling_build_quality(ViewportOcclusionCullingBuildQuality p_quality) = 0;
 
 	enum ViewportRenderInfo {
 		VIEWPORT_RENDER_INFO_OBJECTS_IN_FRAME,
@@ -1165,10 +1143,6 @@ public:
 		VIEWPORT_VRS_UPDATE_ALWAYS,
 		VIEWPORT_VRS_UPDATE_MAX,
 	};
-
-	virtual void viewport_set_vrs_mode(RID p_viewport, ViewportVRSMode p_mode) = 0;
-	virtual void viewport_set_vrs_update_mode(RID p_viewport, ViewportVRSUpdateMode p_mode) = 0;
-	virtual void viewport_set_vrs_texture(RID p_viewport, RID p_texture) = 0;
 
 	/* SKY API */
 

@@ -359,7 +359,6 @@ EditorMaterialPreviewPlugin::EditorMaterialPreviewPlugin() {
 
 	viewport = RS::get_singleton()->viewport_create();
 	RS::get_singleton()->viewport_set_update_mode(viewport, RS::VIEWPORT_UPDATE_DISABLED);
-	RS::get_singleton()->viewport_set_scenario(viewport, scenario);
 	RS::get_singleton()->viewport_set_size(viewport, 128, 128);
 	RS::get_singleton()->viewport_set_transparent_background(viewport, true);
 	RS::get_singleton()->viewport_set_active(viewport, true);
@@ -777,7 +776,6 @@ EditorMeshPreviewPlugin::EditorMeshPreviewPlugin() {
 
 	viewport = RS::get_singleton()->viewport_create();
 	RS::get_singleton()->viewport_set_update_mode(viewport, RS::VIEWPORT_UPDATE_DISABLED);
-	RS::get_singleton()->viewport_set_scenario(viewport, scenario);
 	RS::get_singleton()->viewport_set_size(viewport, 128, 128);
 	RS::get_singleton()->viewport_set_transparent_background(viewport, true);
 	RS::get_singleton()->viewport_set_active(viewport, true);

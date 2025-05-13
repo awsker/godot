@@ -548,7 +548,6 @@ void Viewport::_notification(int p_what) {
 			RenderingServer::get_singleton()->viewport_set_canvas_cull_mask(viewport, canvas_cull_mask);
 			_update_audio_listener_2d();
 #ifndef _3D_DISABLED
-			RenderingServer::get_singleton()->viewport_set_scenario(viewport, find_world_3d()->get_scenario());
 			_update_audio_listener_3d();
 #endif // _3D_DISABLED
 
@@ -621,7 +620,6 @@ void Viewport::_notification(int p_what) {
 		case NOTIFICATION_EXIT_TREE: {
 			_gui_cancel_tooltip();
 
-			RenderingServer::get_singleton()->viewport_set_scenario(viewport, RID());
 			RenderingServer::get_singleton()->viewport_remove_canvas(viewport, current_canvas);
 #ifndef PHYSICS_2D_DISABLED
 			if (contact_2d_debug.is_valid()) {
@@ -742,18 +740,6 @@ void Viewport::_process_picking() {
 		physics_picking_events.clear();
 		return;
 	}
-#ifndef XR_DISABLED
-	if (use_xr) {
-		if (XRServer::get_singleton() != nullptr) {
-			Ref<XRInterface> xr_interface = XRServer::get_singleton()->get_primary_interface();
-			if (xr_interface.is_valid() && xr_interface->is_initialized() && xr_interface->get_view_count() > 1) {
-				WARN_PRINT_ONCE("Object picking can't be used when stereo rendering, this will be turned off!");
-				physics_object_picking = false; // don't try again.
-				return;
-			}
-		}
-	}
-#endif // XR_DISABLED
 
 	_drop_physics_mouseover(true);
 
@@ -1115,15 +1101,7 @@ bool Viewport::_set_size(const Size2 &p_size, const Size2i &p_texture_resolution
 	stretch_transform = stretch_transform_new;
 	font_oversampling = new_font_oversampling;
 
-#ifndef _3D_DISABLED
-	if (!use_xr) {
-#endif
-		_update_viewport_resolution();
-
-#ifndef _3D_DISABLED
-	} // if (!use_xr)
-#endif
-
+	_update_viewport_resolution();
 	_update_global_transform();
 	update_configuration_warnings();
 
@@ -1190,18 +1168,6 @@ void Viewport::_update_viewport_resolution() {
 }
 
 Size2 Viewport::_get_size() const {
-#ifndef XR_DISABLED
-	if (use_xr) {
-		if (XRServer::get_singleton() != nullptr) {
-			Ref<XRInterface> xr_interface = XRServer::get_singleton()->get_primary_interface();
-			if (xr_interface.is_valid() && xr_interface->is_initialized()) {
-				return xr_interface->get_render_target_size();
-			}
-		}
-		return Size2();
-	}
-#endif // XR_DISABLED
-
 	return size;
 }
 
@@ -3727,92 +3693,6 @@ Viewport::MSAA Viewport::get_msaa_2d() const {
 	return msaa_2d;
 }
 
-void Viewport::set_msaa_3d(MSAA p_msaa) {
-	ERR_MAIN_THREAD_GUARD;
-	ERR_FAIL_INDEX(p_msaa, MSAA_MAX);
-	if (msaa_3d == p_msaa) {
-		return;
-	}
-	msaa_3d = p_msaa;
-	RS::get_singleton()->viewport_set_msaa_3d(viewport, RS::ViewportMSAA(p_msaa));
-}
-
-Viewport::MSAA Viewport::get_msaa_3d() const {
-	ERR_READ_THREAD_GUARD_V(MSAA_DISABLED);
-	return msaa_3d;
-}
-
-void Viewport::set_screen_space_aa(ScreenSpaceAA p_screen_space_aa) {
-	ERR_MAIN_THREAD_GUARD;
-	ERR_FAIL_INDEX(p_screen_space_aa, SCREEN_SPACE_AA_MAX);
-	if (screen_space_aa == p_screen_space_aa) {
-		return;
-	}
-	screen_space_aa = p_screen_space_aa;
-	RS::get_singleton()->viewport_set_screen_space_aa(viewport, RS::ViewportScreenSpaceAA(p_screen_space_aa));
-}
-
-Viewport::ScreenSpaceAA Viewport::get_screen_space_aa() const {
-	ERR_READ_THREAD_GUARD_V(SCREEN_SPACE_AA_DISABLED);
-	return screen_space_aa;
-}
-
-void Viewport::set_use_taa(bool p_use_taa) {
-	ERR_MAIN_THREAD_GUARD;
-	if (use_taa == p_use_taa) {
-		return;
-	}
-	use_taa = p_use_taa;
-	RS::get_singleton()->viewport_set_use_taa(viewport, p_use_taa);
-}
-
-bool Viewport::is_using_taa() const {
-	ERR_READ_THREAD_GUARD_V(false);
-	return use_taa;
-}
-
-void Viewport::set_use_debanding(bool p_use_debanding) {
-	ERR_MAIN_THREAD_GUARD;
-	if (use_debanding == p_use_debanding) {
-		return;
-	}
-	use_debanding = p_use_debanding;
-	RS::get_singleton()->viewport_set_use_debanding(viewport, p_use_debanding);
-}
-
-bool Viewport::is_using_debanding() const {
-	ERR_READ_THREAD_GUARD_V(false);
-	return use_debanding;
-}
-
-void Viewport::set_mesh_lod_threshold(float p_pixels) {
-	ERR_MAIN_THREAD_GUARD;
-	mesh_lod_threshold = p_pixels;
-	RS::get_singleton()->viewport_set_mesh_lod_threshold(viewport, mesh_lod_threshold);
-}
-
-float Viewport::get_mesh_lod_threshold() const {
-	ERR_READ_THREAD_GUARD_V(0);
-	return mesh_lod_threshold;
-}
-
-void Viewport::set_use_occlusion_culling(bool p_use_occlusion_culling) {
-	ERR_MAIN_THREAD_GUARD;
-	if (use_occlusion_culling == p_use_occlusion_culling) {
-		return;
-	}
-
-	use_occlusion_culling = p_use_occlusion_culling;
-	RS::get_singleton()->viewport_set_use_occlusion_culling(viewport, p_use_occlusion_culling);
-
-	notify_property_list_changed();
-}
-
-bool Viewport::is_using_occlusion_culling() const {
-	ERR_READ_THREAD_GUARD_V(false);
-	return use_occlusion_culling;
-}
-
 void Viewport::set_debug_draw(DebugDraw p_debug_draw) {
 	ERR_MAIN_THREAD_GUARD;
 	debug_draw = p_debug_draw;
@@ -3991,67 +3871,6 @@ void Viewport::set_default_canvas_item_texture_repeat(DefaultCanvasItemTextureRe
 Viewport::DefaultCanvasItemTextureRepeat Viewport::get_default_canvas_item_texture_repeat() const {
 	ERR_READ_THREAD_GUARD_V(DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_DISABLED);
 	return default_canvas_item_texture_repeat;
-}
-
-void Viewport::set_vrs_mode(Viewport::VRSMode p_vrs_mode) {
-	ERR_MAIN_THREAD_GUARD;
-	// Note, set this even if not supported on this hardware, it will only be used if it is but we want to save the value as set by the user.
-	vrs_mode = p_vrs_mode;
-
-	switch (p_vrs_mode) {
-		case VRS_TEXTURE: {
-			RS::get_singleton()->viewport_set_vrs_mode(viewport, RS::VIEWPORT_VRS_TEXTURE);
-		} break;
-		case VRS_XR: {
-			RS::get_singleton()->viewport_set_vrs_mode(viewport, RS::VIEWPORT_VRS_XR);
-		} break;
-		default: {
-			RS::get_singleton()->viewport_set_vrs_mode(viewport, RS::VIEWPORT_VRS_DISABLED);
-		} break;
-	}
-
-	notify_property_list_changed();
-}
-
-Viewport::VRSMode Viewport::get_vrs_mode() const {
-	ERR_READ_THREAD_GUARD_V(VRS_DISABLED);
-	return vrs_mode;
-}
-
-void Viewport::set_vrs_update_mode(VRSUpdateMode p_vrs_update_mode) {
-	ERR_MAIN_THREAD_GUARD;
-
-	vrs_update_mode = p_vrs_update_mode;
-	switch (p_vrs_update_mode) {
-		case VRS_UPDATE_ONCE: {
-			RS::get_singleton()->viewport_set_vrs_update_mode(viewport, RS::VIEWPORT_VRS_UPDATE_ONCE);
-		} break;
-		case VRS_UPDATE_ALWAYS: {
-			RS::get_singleton()->viewport_set_vrs_update_mode(viewport, RS::VIEWPORT_VRS_UPDATE_ALWAYS);
-		} break;
-		default: {
-			RS::get_singleton()->viewport_set_vrs_update_mode(viewport, RS::VIEWPORT_VRS_UPDATE_DISABLED);
-		} break;
-	}
-}
-
-Viewport::VRSUpdateMode Viewport::get_vrs_update_mode() const {
-	ERR_READ_THREAD_GUARD_V(VRS_UPDATE_DISABLED);
-	return vrs_update_mode;
-}
-
-void Viewport::set_vrs_texture(Ref<Texture2D> p_texture) {
-	ERR_MAIN_THREAD_GUARD;
-	vrs_texture = p_texture;
-
-	// TODO need to add something here in case the RID changes
-	RID tex = p_texture.is_valid() ? p_texture->get_rid() : RID();
-	RS::get_singleton()->viewport_set_vrs_texture(viewport, tex);
-}
-
-Ref<Texture2D> Viewport::get_vrs_texture() const {
-	ERR_READ_THREAD_GUARD_V(Ref<Texture2D>());
-	return vrs_texture;
 }
 
 DisplayServer::WindowID Viewport::get_window_id() const {
@@ -4613,17 +4432,6 @@ HashMap<StringName, real_t> Viewport::get_camera_3d_override_properties() const 
 	return props;
 }
 
-void Viewport::set_disable_3d(bool p_disable) {
-	ERR_MAIN_THREAD_GUARD;
-	disable_3d = p_disable;
-	RenderingServer::get_singleton()->viewport_set_disable_3d(viewport, disable_3d);
-}
-
-bool Viewport::is_3d_disabled() const {
-	ERR_READ_THREAD_GUARD_V(false);
-	return disable_3d;
-}
-
 bool Viewport::is_camera_3d_override_enabled() const {
 	ERR_READ_THREAD_GUARD_V(false);
 	return camera_3d_override;
@@ -4741,10 +4549,6 @@ void Viewport::set_world_3d(const Ref<World3D> &p_world_3d) {
 		_propagate_enter_world_3d(this);
 	}
 
-	if (is_inside_tree()) {
-		RenderingServer::get_singleton()->viewport_set_scenario(viewport, find_world_3d()->get_scenario());
-	}
-
 	_update_audio_listener_3d();
 }
 
@@ -4760,10 +4564,6 @@ void Viewport::_own_world_3d_changed() {
 
 	if (is_inside_tree()) {
 		_propagate_enter_world_3d(this);
-	}
-
-	if (is_inside_tree()) {
-		RenderingServer::get_singleton()->viewport_set_scenario(viewport, find_world_3d()->get_scenario());
 	}
 
 	_update_audio_listener_3d();
@@ -4795,10 +4595,6 @@ void Viewport::set_use_own_world_3d(bool p_use_own_world_3d) {
 
 	if (is_inside_tree()) {
 		_propagate_enter_world_3d(this);
-	}
-
-	if (is_inside_tree()) {
-		RenderingServer::get_singleton()->viewport_set_scenario(viewport, find_world_3d()->get_scenario());
 	}
 
 	_update_audio_listener_3d();
@@ -4853,93 +4649,6 @@ void Viewport::_propagate_exit_world_3d(Node *p_node) {
 	for (int i = 0; i < p_node->get_child_count(); i++) {
 		_propagate_exit_world_3d(p_node->get_child(i));
 	}
-}
-
-void Viewport::set_use_xr(bool p_use_xr) {
-	ERR_MAIN_THREAD_GUARD;
-	if (use_xr != p_use_xr) {
-		use_xr = p_use_xr;
-
-		RS::get_singleton()->viewport_set_use_xr(viewport, use_xr);
-
-		if (!use_xr) {
-			// Set viewport to previous size when exiting XR.
-			_update_viewport_with_current_settings();
-
-			// Reset render target override textures.
-			RID rt = RS::get_singleton()->viewport_get_render_target(viewport);
-			RSG::texture_storage->render_target_set_override(rt, RID(), RID(), RID(), RID());
-		}
-	}
-}
-
-bool Viewport::is_using_xr() {
-	ERR_READ_THREAD_GUARD_V(false);
-	return use_xr;
-}
-
-void Viewport::set_scaling_3d_mode(Scaling3DMode p_scaling_3d_mode) {
-	ERR_MAIN_THREAD_GUARD;
-	if (scaling_3d_mode == p_scaling_3d_mode) {
-		return;
-	}
-
-	scaling_3d_mode = p_scaling_3d_mode;
-	RS::get_singleton()->viewport_set_scaling_3d_mode(viewport, (RS::ViewportScaling3DMode)(int)p_scaling_3d_mode);
-}
-
-Viewport::Scaling3DMode Viewport::get_scaling_3d_mode() const {
-	ERR_READ_THREAD_GUARD_V(SCALING_3D_MODE_BILINEAR);
-	return scaling_3d_mode;
-}
-
-void Viewport::set_scaling_3d_scale(float p_scaling_3d_scale) {
-	ERR_MAIN_THREAD_GUARD;
-	// Clamp to reasonable values that are actually useful.
-	// Values above 2.0 don't serve a practical purpose since the viewport
-	// isn't displayed with mipmaps.
-	scaling_3d_scale = CLAMP(p_scaling_3d_scale, 0.1, 2.0);
-
-	RS::get_singleton()->viewport_set_scaling_3d_scale(viewport, scaling_3d_scale);
-}
-
-float Viewport::get_scaling_3d_scale() const {
-	ERR_READ_THREAD_GUARD_V(0);
-	return scaling_3d_scale;
-}
-
-void Viewport::set_fsr_sharpness(float p_fsr_sharpness) {
-	ERR_MAIN_THREAD_GUARD;
-	if (fsr_sharpness == p_fsr_sharpness) {
-		return;
-	}
-
-	if (p_fsr_sharpness < 0.0f) {
-		p_fsr_sharpness = 0.0f;
-	}
-
-	fsr_sharpness = p_fsr_sharpness;
-	RS::get_singleton()->viewport_set_fsr_sharpness(viewport, p_fsr_sharpness);
-}
-
-float Viewport::get_fsr_sharpness() const {
-	ERR_READ_THREAD_GUARD_V(0);
-	return fsr_sharpness;
-}
-
-void Viewport::set_texture_mipmap_bias(float p_texture_mipmap_bias) {
-	ERR_MAIN_THREAD_GUARD;
-	if (texture_mipmap_bias == p_texture_mipmap_bias) {
-		return;
-	}
-
-	texture_mipmap_bias = p_texture_mipmap_bias;
-	RS::get_singleton()->viewport_set_texture_mipmap_bias(viewport, p_texture_mipmap_bias);
-}
-
-float Viewport::get_texture_mipmap_bias() const {
-	ERR_READ_THREAD_GUARD_V(0);
-	return texture_mipmap_bias;
 }
 
 void Viewport::set_anisotropic_filtering_level(AnisotropicFiltering p_anisotropic_filtering_level) {
@@ -5000,21 +4709,6 @@ void Viewport::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_msaa_2d", "msaa"), &Viewport::set_msaa_2d);
 	ClassDB::bind_method(D_METHOD("get_msaa_2d"), &Viewport::get_msaa_2d);
-
-	ClassDB::bind_method(D_METHOD("set_msaa_3d", "msaa"), &Viewport::set_msaa_3d);
-	ClassDB::bind_method(D_METHOD("get_msaa_3d"), &Viewport::get_msaa_3d);
-
-	ClassDB::bind_method(D_METHOD("set_screen_space_aa", "screen_space_aa"), &Viewport::set_screen_space_aa);
-	ClassDB::bind_method(D_METHOD("get_screen_space_aa"), &Viewport::get_screen_space_aa);
-
-	ClassDB::bind_method(D_METHOD("set_use_taa", "enable"), &Viewport::set_use_taa);
-	ClassDB::bind_method(D_METHOD("is_using_taa"), &Viewport::is_using_taa);
-
-	ClassDB::bind_method(D_METHOD("set_use_debanding", "enable"), &Viewport::set_use_debanding);
-	ClassDB::bind_method(D_METHOD("is_using_debanding"), &Viewport::is_using_debanding);
-
-	ClassDB::bind_method(D_METHOD("set_use_occlusion_culling", "enable"), &Viewport::set_use_occlusion_culling);
-	ClassDB::bind_method(D_METHOD("is_using_occlusion_culling"), &Viewport::is_using_occlusion_culling);
 
 	ClassDB::bind_method(D_METHOD("set_debug_draw", "debug_draw"), &Viewport::set_debug_draw);
 	ClassDB::bind_method(D_METHOD("get_debug_draw"), &Viewport::get_debug_draw);
@@ -5115,9 +4809,6 @@ void Viewport::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_sdf_scale", "scale"), &Viewport::set_sdf_scale);
 	ClassDB::bind_method(D_METHOD("get_sdf_scale"), &Viewport::get_sdf_scale);
 
-	ClassDB::bind_method(D_METHOD("set_mesh_lod_threshold", "pixels"), &Viewport::set_mesh_lod_threshold);
-	ClassDB::bind_method(D_METHOD("get_mesh_lod_threshold"), &Viewport::get_mesh_lod_threshold);
-
 #if !defined(PHYSICS_2D_DISABLED) || !defined(PHYSICS_3D_DISABLED)
 	ClassDB::bind_method(D_METHOD("_process_picking"), &Viewport::_process_picking);
 #endif // !defined(PHYSICS_2D_DISABLED) || !defined(PHYSICS_3D_DISABLED)
@@ -5140,38 +4831,9 @@ void Viewport::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_as_audio_listener_3d", "enable"), &Viewport::set_as_audio_listener_3d);
 	ClassDB::bind_method(D_METHOD("is_audio_listener_3d"), &Viewport::is_audio_listener_3d);
 
-	ClassDB::bind_method(D_METHOD("set_disable_3d", "disable"), &Viewport::set_disable_3d);
-	ClassDB::bind_method(D_METHOD("is_3d_disabled"), &Viewport::is_3d_disabled);
-
-	ClassDB::bind_method(D_METHOD("set_use_xr", "use"), &Viewport::set_use_xr);
-	ClassDB::bind_method(D_METHOD("is_using_xr"), &Viewport::is_using_xr);
-
-	ClassDB::bind_method(D_METHOD("set_scaling_3d_mode", "scaling_3d_mode"), &Viewport::set_scaling_3d_mode);
-	ClassDB::bind_method(D_METHOD("get_scaling_3d_mode"), &Viewport::get_scaling_3d_mode);
-
-	ClassDB::bind_method(D_METHOD("set_scaling_3d_scale", "scale"), &Viewport::set_scaling_3d_scale);
-	ClassDB::bind_method(D_METHOD("get_scaling_3d_scale"), &Viewport::get_scaling_3d_scale);
-
-	ClassDB::bind_method(D_METHOD("set_fsr_sharpness", "fsr_sharpness"), &Viewport::set_fsr_sharpness);
-	ClassDB::bind_method(D_METHOD("get_fsr_sharpness"), &Viewport::get_fsr_sharpness);
-
-	ClassDB::bind_method(D_METHOD("set_texture_mipmap_bias", "texture_mipmap_bias"), &Viewport::set_texture_mipmap_bias);
-	ClassDB::bind_method(D_METHOD("get_texture_mipmap_bias"), &Viewport::get_texture_mipmap_bias);
-
 	ClassDB::bind_method(D_METHOD("set_anisotropic_filtering_level", "anisotropic_filtering_level"), &Viewport::set_anisotropic_filtering_level);
 	ClassDB::bind_method(D_METHOD("get_anisotropic_filtering_level"), &Viewport::get_anisotropic_filtering_level);
 
-	ClassDB::bind_method(D_METHOD("set_vrs_mode", "mode"), &Viewport::set_vrs_mode);
-	ClassDB::bind_method(D_METHOD("get_vrs_mode"), &Viewport::get_vrs_mode);
-
-	ClassDB::bind_method(D_METHOD("set_vrs_update_mode", "mode"), &Viewport::set_vrs_update_mode);
-	ClassDB::bind_method(D_METHOD("get_vrs_update_mode"), &Viewport::get_vrs_update_mode);
-
-	ClassDB::bind_method(D_METHOD("set_vrs_texture", "texture"), &Viewport::set_vrs_texture);
-	ClassDB::bind_method(D_METHOD("get_vrs_texture"), &Viewport::get_vrs_texture);
-
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "disable_3d"), "set_disable_3d", "is_3d_disabled");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_xr"), "set_use_xr", "is_using_xr");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "own_world_3d"), "set_use_own_world_3d", "is_using_own_world_3d");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "world_3d", PROPERTY_HINT_RESOURCE_TYPE, "World3D"), "set_world_3d", "get_world_3d");
 #endif // _3D_DISABLED
@@ -5182,26 +4844,12 @@ void Viewport::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_2d_vertices_to_pixel"), "set_snap_2d_vertices_to_pixel", "is_snap_2d_vertices_to_pixel_enabled");
 	ADD_GROUP("Rendering", "");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_2d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Average),4× (Slow),8× (Slowest)")), "set_msaa_2d", "get_msaa_2d");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_3d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Average),4× (Slow),8× (Slowest)")), "set_msaa_3d", "get_msaa_3d");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "screen_space_aa", PROPERTY_HINT_ENUM, "Disabled (Fastest),FXAA (Fast)"), "set_screen_space_aa", "get_screen_space_aa");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_taa"), "set_use_taa", "is_using_taa");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_debanding"), "set_use_debanding", "is_using_debanding");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_occlusion_culling"), "set_use_occlusion_culling", "is_using_occlusion_culling");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "mesh_lod_threshold", PROPERTY_HINT_RANGE, "0,1024,0.1"), "set_mesh_lod_threshold", "get_mesh_lod_threshold");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "debug_draw", PROPERTY_HINT_ENUM, "Disabled,Unshaded,Lighting,Overdraw,Wireframe,Normal Buffer,VoxelGI Albedo,VoxelGI Lighting,VoxelGI Emission,Shadow Atlas,Directional Shadow Map,Scene Luminance,SSAO,SSIL,Directional Shadow Splits,Decal Atlas,SDFGI Cascades,SDFGI Probes,VoxelGI/SDFGI Buffer,Disable Mesh LOD,OmniLight3D Cluster,SpotLight3D Cluster,Decal Cluster,ReflectionProbe Cluster,Occlusion Culling Buffer,Motion Vectors,Internal Buffer"), "set_debug_draw", "get_debug_draw");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_hdr_2d"), "set_use_hdr_2d", "is_using_hdr_2d");
 
 #ifndef _3D_DISABLED
 	ADD_GROUP("Scaling 3D", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "scaling_3d_mode", PROPERTY_HINT_ENUM, "Bilinear (Fastest),FSR 1.0 (Fast),FSR 2.2 (Slow),MetalFX (Spatial),MetalFX (Temporal)"), "set_scaling_3d_mode", "get_scaling_3d_mode");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scaling_3d_scale", PROPERTY_HINT_RANGE, "0.25,2.0,0.01"), "set_scaling_3d_scale", "get_scaling_3d_scale");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "texture_mipmap_bias", PROPERTY_HINT_RANGE, "-2,2,0.001"), "set_texture_mipmap_bias", "get_texture_mipmap_bias");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "anisotropic_filtering_level", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Faster),4× (Fast),8× (Average),16x (Slow)")), "set_anisotropic_filtering_level", "get_anisotropic_filtering_level");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "fsr_sharpness", PROPERTY_HINT_RANGE, "0,2,0.1"), "set_fsr_sharpness", "get_fsr_sharpness");
-	ADD_GROUP("Variable Rate Shading", "vrs_");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "vrs_mode", PROPERTY_HINT_ENUM, "Disabled,Texture,Depth buffer,XR"), "set_vrs_mode", "get_vrs_mode");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "vrs_update_mode", PROPERTY_HINT_ENUM, "Disabled,Once,Always"), "set_vrs_update_mode", "get_vrs_update_mode");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "vrs_texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"), "set_vrs_texture", "get_vrs_texture");
 #endif
 	ADD_GROUP("Canvas Items", "canvas_item_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "canvas_item_default_texture_filter", PROPERTY_HINT_ENUM, "Nearest,Linear,Linear Mipmap,Nearest Mipmap"), "set_default_canvas_item_texture_filter", "get_default_canvas_item_texture_filter");
@@ -5379,7 +5027,6 @@ Viewport::Viewport() {
 	set_positional_shadow_atlas_quadrant_subdiv(2, SHADOW_ATLAS_QUADRANT_SUBDIV_16);
 	set_positional_shadow_atlas_quadrant_subdiv(3, SHADOW_ATLAS_QUADRANT_SUBDIV_64);
 
-	set_mesh_lod_threshold(mesh_lod_threshold);
 
 	String id = itos(get_instance_id());
 	input_group = "_vp_input" + id;
@@ -5391,10 +5038,6 @@ Viewport::Viewport() {
 	gui.tooltip_delay = GLOBAL_GET("gui/timers/tooltip_delay_sec");
 
 #ifndef _3D_DISABLED
-	set_scaling_3d_mode((Viewport::Scaling3DMode)(int)GLOBAL_GET("rendering/scaling_3d/mode"));
-	set_scaling_3d_scale(GLOBAL_GET("rendering/scaling_3d/scale"));
-	set_fsr_sharpness((float)GLOBAL_GET("rendering/scaling_3d/fsr_sharpness"));
-	set_texture_mipmap_bias((float)GLOBAL_GET("rendering/textures/default_filters/texture_mipmap_bias"));
 	set_anisotropic_filtering_level((Viewport::AnisotropicFiltering)(int)GLOBAL_GET("rendering/textures/default_filters/anisotropic_filtering_level"));
 #endif // _3D_DISABLED
 

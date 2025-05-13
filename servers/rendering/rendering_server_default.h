@@ -681,7 +681,6 @@ public:
 
 	FUNCRIDSPLIT(viewport)
 
-	FUNC2(viewport_set_use_xr, RID, bool)
 	FUNC3(viewport_set_size, RID, int, int)
 	FUNC1RC(Size2i, viewport_get_size, RID)
 
@@ -693,10 +692,6 @@ public:
 	FUNC3(viewport_attach_to_screen, RID, const Rect2 &, int)
 	FUNC2(viewport_set_render_direct_to_screen, RID, bool)
 
-	FUNC2(viewport_set_scaling_3d_mode, RID, ViewportScaling3DMode)
-	FUNC2(viewport_set_scaling_3d_scale, RID, float)
-	FUNC2(viewport_set_fsr_sharpness, RID, float)
-	FUNC2(viewport_set_texture_mipmap_bias, RID, float)
 	FUNC2(viewport_set_anisotropic_filtering_level, RID, ViewportAnisotropicFiltering)
 
 	FUNC2(viewport_set_update_mode, RID, ViewportUpdateMode)
@@ -706,13 +701,10 @@ public:
 	FUNC1RC(RID, viewport_get_texture, RID)
 
 	FUNC2(viewport_set_disable_2d, RID, bool)
-	FUNC2(viewport_set_environment_mode, RID, ViewportEnvironmentMode)
-	FUNC2(viewport_set_disable_3d, RID, bool)
 
 	FUNC2(viewport_set_canvas_cull_mask, RID, uint32_t)
 
 	FUNC2(viewport_attach_camera, RID, RID)
-	FUNC2(viewport_set_scenario, RID, RID)
 	FUNC2(viewport_attach_canvas, RID, RID)
 
 	FUNC2(viewport_remove_canvas, RID, RID)
@@ -732,15 +724,7 @@ public:
 	FUNC3(viewport_set_sdf_oversize_and_scale, RID, ViewportSDFOversize, ViewportSDFScale)
 	FUNC3(viewport_set_positional_shadow_atlas_quadrant_subdivision, RID, int, int)
 	FUNC2(viewport_set_msaa_2d, RID, ViewportMSAA)
-	FUNC2(viewport_set_msaa_3d, RID, ViewportMSAA)
-	FUNC2(viewport_set_screen_space_aa, RID, ViewportScreenSpaceAA)
-	FUNC2(viewport_set_use_taa, RID, bool)
-	FUNC2(viewport_set_use_debanding, RID, bool)
 	FUNC2(viewport_set_force_motion_vectors, RID, bool)
-	FUNC2(viewport_set_use_occlusion_culling, RID, bool)
-	FUNC1(viewport_set_occlusion_rays_per_thread, int)
-	FUNC1(viewport_set_occlusion_culling_build_quality, ViewportOcclusionCullingBuildQuality)
-	FUNC2(viewport_set_mesh_lod_threshold, RID, float)
 
 	FUNC3R(int, viewport_get_render_info, RID, ViewportRenderInfoType, ViewportRenderInfo)
 	FUNC2(viewport_set_debug_draw, RID, ViewportDebugDraw)
@@ -751,10 +735,6 @@ public:
 	FUNC1RC(RID, viewport_find_from_screen_attachment, DisplayServer::WindowID)
 
 	FUNC2(call_set_vsync_mode, DisplayServer::VSyncMode, DisplayServer::WindowID)
-
-	FUNC2(viewport_set_vrs_mode, RID, ViewportVRSMode)
-	FUNC2(viewport_set_vrs_update_mode, RID, ViewportVRSUpdateMode)
-	FUNC2(viewport_set_vrs_texture, RID, RID)
 
 	/* COMPOSITOR EFFECT */
 

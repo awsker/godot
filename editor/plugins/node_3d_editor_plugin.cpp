@@ -2870,40 +2870,6 @@ void Node3DEditorViewport::_project_settings_changed() {
 
 	// Update MSAA, screen-space AA and debanding if changed
 
-	const int msaa_mode = GLOBAL_GET("rendering/anti_aliasing/quality/msaa_3d");
-	viewport->set_msaa_3d(Viewport::MSAA(msaa_mode));
-	const int ssaa_mode = GLOBAL_GET("rendering/anti_aliasing/quality/screen_space_aa");
-	viewport->set_screen_space_aa(Viewport::ScreenSpaceAA(ssaa_mode));
-	const bool use_taa = GLOBAL_GET("rendering/anti_aliasing/quality/use_taa");
-	viewport->set_use_taa(use_taa);
-
-	const bool transparent_background = GLOBAL_GET("rendering/viewport/transparent_background");
-	viewport->set_transparent_background(transparent_background);
-
-	const bool use_hdr_2d = GLOBAL_GET("rendering/viewport/hdr_2d");
-	viewport->set_use_hdr_2d(use_hdr_2d);
-
-	const bool use_debanding = GLOBAL_GET("rendering/anti_aliasing/quality/use_debanding");
-	viewport->set_use_debanding(use_debanding);
-
-	const bool use_occlusion_culling = GLOBAL_GET("rendering/occlusion_culling/use_occlusion_culling");
-	viewport->set_use_occlusion_culling(use_occlusion_culling);
-
-	const float mesh_lod_threshold = GLOBAL_GET("rendering/mesh_lod/lod_change/threshold_pixels");
-	viewport->set_mesh_lod_threshold(mesh_lod_threshold);
-
-	const Viewport::Scaling3DMode scaling_3d_mode = Viewport::Scaling3DMode(int(GLOBAL_GET("rendering/scaling_3d/mode")));
-	viewport->set_scaling_3d_mode(scaling_3d_mode);
-
-	const float scaling_3d_scale = GLOBAL_GET("rendering/scaling_3d/scale");
-	viewport->set_scaling_3d_scale(scaling_3d_scale);
-
-	const float fsr_sharpness = GLOBAL_GET("rendering/scaling_3d/fsr_sharpness");
-	viewport->set_fsr_sharpness(fsr_sharpness);
-
-	const float texture_mipmap_bias = GLOBAL_GET("rendering/textures/default_filters/texture_mipmap_bias");
-	viewport->set_texture_mipmap_bias(texture_mipmap_bias);
-
 	const Viewport::AnisotropicFiltering anisotropic_filtering_level = Viewport::AnisotropicFiltering(int(GLOBAL_GET("rendering/textures/default_filters/anisotropic_filtering_level")));
 	viewport->set_anisotropic_filtering_level(anisotropic_filtering_level);
 }
