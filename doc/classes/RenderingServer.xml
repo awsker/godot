@@ -3901,18 +3901,18 @@
 				Returns the render target for the viewport.
 			</description>
 		</method>
+		<method name="viewport_get_size" qualifiers="const">
+			<return type="Vector2i" />
+			<param index="0" name="viewport" type="RID" />
+			<description>
+				Gets the viewport's width and height in pixels.
+			</description>
+		</method>
 		<method name="viewport_get_texture" qualifiers="const">
 			<return type="RID" />
 			<param index="0" name="viewport" type="RID" />
 			<description>
 				Returns the viewport's last rendered frame.
-			</description>
-		</method>
-		<method name="viewport_get_size">
-			<return type="Size2i" />
-			<param index="0" name="viewport" type="RID" />
-			<description>
-				Gets the viewport's width and height in pixels.
 			</description>
 		</method>
 		<method name="viewport_get_update_mode" qualifiers="const">
