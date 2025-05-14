@@ -3901,8 +3901,8 @@
 				Returns the render target for the viewport.
 			</description>
 		</method>
-		<method name="viewport_get_size">
-			<return type="Vector2" />
+		<method name="viewport_get_size" qualifiers="const">
+			<return type="Vector2i" />
 			<param index="0" name="viewport" type="RID" />
 			<description>
 				Gets the viewport's width and height in pixels.
