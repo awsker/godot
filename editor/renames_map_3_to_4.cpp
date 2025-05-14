@@ -374,7 +374,6 @@ const char *RenamesMap3To4::gdscript_function_renames[][2] = {
 	{ "get_selected_path", "get_current_directory" }, // EditorInterface
 	{ "get_shader_param", "get_shader_parameter" }, // ShaderMaterial
 	{ "get_shift", "is_shift_pressed" }, // InputEventWithModifiers
-	{ "get_size_override", "get_size_2d_override" }, // SubViewport
 	{ "get_slide_count", "get_slide_collision_count" }, // CharacterBody2D, CharacterBody3D
 	{ "get_slips_on_slope", "get_slide_on_slope" }, // SeparationRayShape2D, SeparationRayShape3D
 	{ "get_space_override_mode", "get_gravity_space_override_mode" }, // Area2D
@@ -443,7 +442,6 @@ const char *RenamesMap3To4::gdscript_function_renames[][2] = {
 	{ "is_selectable_when_hidden", "_is_selectable_when_hidden" }, // EditorNode3DGizmoPlugin
 	{ "is_set_as_toplevel", "is_set_as_top_level" }, // CanvasItem
 	{ "is_shortcut", "matches_event" }, // Shortcut
-	{ "is_size_override_stretch_enabled", "is_size_2d_override_stretch_enabled" }, // SubViewport
 	{ "is_sort_enabled", "is_y_sort_enabled" }, // Node2D
 	{ "is_static_body", "is_able_to_sleep" }, // PhysicalBone3D -- Not sure.
 	{ "is_v_drag_enabled", "is_drag_vertical_enabled" }, // Camera2D
@@ -556,8 +554,6 @@ const char *RenamesMap3To4::gdscript_function_renames[][2] = {
 	{ "set_scancode", "set_keycode" }, // InputEventKey
 	{ "set_shader_param", "set_shader_parameter" }, // ShaderMaterial
 	{ "set_shift", "set_shift_pressed" }, // InputEventWithModifiers
-	{ "set_size_override", "set_size_2d_override" }, // SubViewport -- Breaks ImageTexture.
-	{ "set_size_override_stretch", "set_size_2d_override_stretch" }, // SubViewport
 	{ "set_slips_on_slope", "set_slide_on_slope" }, // SeparationRayShape2D, SeparationRayShape3D
 	{ "set_sort_enabled", "set_y_sort_enabled" }, // Node2D
 	{ "set_space_override_mode", "set_gravity_space_override_mode" }, // Area2D
@@ -1148,7 +1144,6 @@ const char *RenamesMap3To4::gdscript_properties_renames[][2] = {
 	{ "reverb_bus_enable", "reverb_bus_enabled" }, // Area3D
 	{ "scancode", "keycode" }, // InputEventKey
 	{ "selectedframe", "selected_frame" }, // Theme
-	{ "size_override_stretch", "size_2d_override_stretch" }, // SubViewport
 	{ "slips_on_slope", "slide_on_slope" }, // SeparationRayShape2D
 	{ "smoothing_enabled", "position_smoothing_enabled" }, // Camera2D
 	{ "smoothing_speed", "position_smoothing_speed" }, // Camera2D
