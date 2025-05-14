@@ -4111,15 +4111,6 @@
 				If [code]true[/code], canvas item vertices (i.e. polygon points) are snapped to the nearest pixel when rendering. This can lead to a crisper appearance at the cost of less smooth movement, especially when [Camera2D] smoothing is enabled. Equivalent to [member ProjectSettings.rendering/2d/snap/snap_2d_vertices_to_pixel].
 			</description>
 		</method>
-		<method name="viewport_set_texture_mipmap_bias">
-			<return type="void" />
-			<param index="0" name="viewport" type="RID" />
-			<param index="1" name="mipmap_bias" type="float" />
-			<description>
-				Affects the final texture sharpness by reading from a lower or higher mipmap (also called "texture LOD bias"). Negative values make mipmapped textures sharper but grainier when viewed at a distance, while positive values make mipmapped textures blurrier (even when up close). To get sharper textures at a distance without introducing too much graininess, set this between [code]-0.75[/code] and [code]0.0[/code]. Enabling temporal antialiasing ([member ProjectSettings.rendering/anti_aliasing/quality/use_taa]) can help reduce the graininess visible when using negative mipmap bias.
-				[b]Note:[/b] When the 3D scaling mode is set to FSR 1.0, this value is used to adjust the automatic mipmap bias which is calculated internally based on the scale factor. The formula for this is [code]-log2(1.0 / scale) + mipmap_bias[/code].
-			</description>
-		</method>
 		<method name="viewport_set_transparent_background">
 			<return type="void" />
 			<param index="0" name="viewport" type="RID" />
@@ -4136,14 +4127,6 @@
 				Sets when the viewport should be updated. See [enum ViewportUpdateMode] constants for options.
 			</description>
 		</method>
-		<method name="viewport_set_use_debanding">
-			<return type="void" />
-			<param index="0" name="viewport" type="RID" />
-			<param index="1" name="enable" type="bool" />
-			<description>
-				If [code]true[/code], enables debanding on the specified viewport. Equivalent to [member ProjectSettings.rendering/anti_aliasing/quality/use_debanding] or [member Viewport.use_debanding].
-			</description>
-		</method>
 		<method name="viewport_set_use_hdr_2d">
 			<return type="void" />
 			<param index="0" name="viewport" type="RID" />
@@ -4151,55 +4134,6 @@
 			<description>
 				If [code]true[/code], 2D rendering will use a high dynamic range (HDR) format framebuffer matching the bit depth of the 3D framebuffer. When using the Forward+ renderer this will be an [code]RGBA16[/code] framebuffer, while when using the Mobile renderer it will be an [code]RGB10_A2[/code] framebuffer. Additionally, 2D rendering will take place in linear color space and will be converted to sRGB space immediately before blitting to the screen (if the Viewport is attached to the screen). Practically speaking, this means that the end result of the Viewport will not be clamped into the [code]0-1[/code] range and can be used in 3D rendering without color space adjustments. This allows 2D rendering to take advantage of effects requiring high dynamic range (e.g. 2D glow) as well as substantially improves the appearance of effects requiring highly detailed gradients. This setting has the same effect as [member Viewport.use_hdr_2d].
 				[b]Note:[/b] This setting will have no effect when using the Compatibility renderer, which always renders in low dynamic range for performance reasons.
-			</description>
-		</method>
-		<method name="viewport_set_use_occlusion_culling">
-			<return type="void" />
-			<param index="0" name="viewport" type="RID" />
-			<param index="1" name="enable" type="bool" />
-			<description>
-				If [code]true[/code], enables occlusion culling on the specified viewport. Equivalent to [member ProjectSettings.rendering/occlusion_culling/use_occlusion_culling].
-			</description>
-		</method>
-		<method name="viewport_set_use_taa">
-			<return type="void" />
-			<param index="0" name="viewport" type="RID" />
-			<param index="1" name="enable" type="bool" />
-			<description>
-				If [code]true[/code], use temporal antialiasing. Equivalent to [member ProjectSettings.rendering/anti_aliasing/quality/use_taa] or [member Viewport.use_taa].
-			</description>
-		</method>
-		<method name="viewport_set_use_xr">
-			<return type="void" />
-			<param index="0" name="viewport" type="RID" />
-			<param index="1" name="use_xr" type="bool" />
-			<description>
-				If [code]true[/code], the viewport uses augmented or virtual reality technologies. See [XRInterface].
-			</description>
-		</method>
-		<method name="viewport_set_vrs_mode">
-			<return type="void" />
-			<param index="0" name="viewport" type="RID" />
-			<param index="1" name="mode" type="int" enum="RenderingServer.ViewportVRSMode" />
-			<description>
-				Sets the Variable Rate Shading (VRS) mode for the viewport. If the GPU does not support VRS, this property is ignored. Equivalent to [member ProjectSettings.rendering/vrs/mode].
-			</description>
-		</method>
-		<method name="viewport_set_vrs_texture">
-			<return type="void" />
-			<param index="0" name="viewport" type="RID" />
-			<param index="1" name="texture" type="RID" />
-			<description>
-				The texture to use when the VRS mode is set to [constant RenderingServer.VIEWPORT_VRS_TEXTURE]. Equivalent to [member ProjectSettings.rendering/vrs/texture].
-			</description>
-		</method>
-		<method name="viewport_set_vrs_update_mode">
-			<return type="void" />
-			<param index="0" name="viewport" type="RID" />
-			<param index="1" name="mode" type="int" enum="RenderingServer.ViewportVRSUpdateMode" />
-			<description>
-				Sets the update mode for Variable Rate Shading (VRS) for the viewport. VRS requires the input texture to be converted to the format usable by the VRS method supported by the hardware. The update mode defines how often this happens. If the GPU does not support VRS, or VRS is not enabled, this property is ignored.
-				If set to [constant RenderingServer.VIEWPORT_VRS_UPDATE_ONCE], the input texture is copied once and the mode is changed to [constant RenderingServer.VIEWPORT_VRS_UPDATE_DISABLED].
 			</description>
 		</method>
 		<method name="visibility_notifier_create">
