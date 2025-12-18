@@ -274,7 +274,8 @@ bool InputMap::event_get_action_status(const Ref<InputEvent> &p_event, const Str
 
 	Ref<InputEventAction> input_event_action = p_event;
 	if (input_event_action.is_valid()) {
-		const bool pressed = input_event_action->is_pressed();
+		float deadzone = InputMap::get_singleton()->action_get_deadzone(p_action);
+		const bool pressed = input_event_action->is_pressed() && input_event_action->get_strength() >= deadzone;
 		if (r_pressed != nullptr) {
 			*r_pressed = pressed;
 		}

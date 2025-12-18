@@ -955,10 +955,11 @@ void Input::_parse_input_event_impl(const Ref<InputEvent> &p_event, bool p_is_em
 		ActionState &action_state = action_states[E.key];
 
 		// Update the action's per-device state.
+		float deadzone = InputMap::get_singleton()->action_get_deadzone(E.key);
 		ActionState::DeviceState &device_state = action_state.device_states[device_id];
-		device_state.pressed[event_index] = is_pressed;
 		device_state.strength[event_index] = p_event->get_action_strength(E.key);
 		device_state.raw_strength[event_index] = p_event->get_action_raw_strength(E.key);
+		device_state.pressed[event_index] = is_pressed && device_state.strength[event_index] >= deadzone;
 
 		// Update the action's global state and cache.
 		if (!is_pressed) {
