@@ -444,6 +444,7 @@ private:
 		//clear request
 		bool clear_requested;
 		Color clear_color;
+		Rect2 clear_region;
 
 		RID get_framebuffer();
 	};
@@ -772,7 +773,7 @@ public:
 	void render_target_gen_back_buffer_mipmaps(RID p_render_target, const Rect2i &p_region);
 	RID render_target_get_back_buffer_uniform_set(RID p_render_target, RID p_base_shader);
 
-	virtual void render_target_request_clear(RID p_render_target, const Color &p_clear_color) override;
+	virtual void render_target_request_clear(RID p_render_target, const Color &p_clear_color, const Rect2 &p_clear_region = Rect2()) override;
 	virtual bool render_target_is_clear_requested(RID p_render_target) override;
 	virtual Color render_target_get_clear_request_color(RID p_render_target) override;
 	virtual void render_target_disable_clear_request(RID p_render_target) override;

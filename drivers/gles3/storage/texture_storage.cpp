@@ -2997,11 +2997,12 @@ uint32_t TextureStorage::render_target_get_color_format_size(RID p_render_target
 	return rt->color_format_size;
 }
 
-void TextureStorage::render_target_request_clear(RID p_render_target, const Color &p_clear_color) {
+void TextureStorage::render_target_request_clear(RID p_render_target, const Color &p_clear_color, const Rect2 &p_clear_region) {
 	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
 	ERR_FAIL_NULL(rt);
 	rt->clear_requested = true;
 	rt->clear_color = p_clear_color;
+	rt->clear_region = p_clear_region;
 }
 
 bool TextureStorage::render_target_is_clear_requested(RID p_render_target) {

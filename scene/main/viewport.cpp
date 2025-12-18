@@ -5487,6 +5487,28 @@ SubViewport::ClearMode SubViewport::get_clear_mode() const {
 	ERR_READ_THREAD_GUARD_V(CLEAR_MODE_ALWAYS);
 	return clear_mode;
 }
+void SubViewport::set_clear_region(const Rect2 &p_region) {
+	ERR_MAIN_THREAD_GUARD;
+	clear_region = p_region;
+	_update_clear_region();
+}
+
+Rect2 SubViewport::get_clear_region() const {
+	ERR_READ_THREAD_GUARD_V(Rect2());
+	return clear_region;
+}
+
+void SubViewport::_update_clear_region() {
+	//Rect2 adjusted_region = clear_region;
+
+	//if (_is_auto_adjust_resolution_enabled()) {
+	//	Size2i current_texture_size = RS::get_singleton()->viewport_get_size(get_viewport_rid());
+	//	Vector2 scale = Vector2(current_texture_size) / Vector2(get_size());
+	//	adjusted_region = Rect2(clear_region.position * scale, clear_region.size * scale);
+	//}
+
+	RS::get_singleton()->viewport_set_clear_region(get_viewport_rid(), clear_region);
+}
 
 DisplayServer::WindowID SubViewport::get_window_id() const {
 	ERR_READ_THREAD_GUARD_V(DisplayServer::INVALID_WINDOW_ID);

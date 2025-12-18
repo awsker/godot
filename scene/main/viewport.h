@@ -884,9 +884,11 @@ public:
 private:
 	UpdateMode update_mode = UPDATE_WHEN_VISIBLE;
 	ClearMode clear_mode = CLEAR_MODE_ALWAYS;
+	Rect2 clear_region = Rect2();
 	bool size_2d_override_stretch = false;
 
 	void _internal_set_size(const Size2i &p_size, bool p_force = false);
+	void _update_clear_region();
 
 protected:
 	static void _bind_methods();
@@ -909,6 +911,9 @@ public:
 
 	void set_clear_mode(ClearMode p_mode);
 	ClearMode get_clear_mode() const;
+
+	void set_clear_region(const Rect2 &p_region);
+	Rect2 get_clear_region() const;
 
 	virtual Transform2D get_screen_transform_internal(bool p_absolute_position = false) const override;
 	virtual Transform2D get_popup_base_transform() const override;

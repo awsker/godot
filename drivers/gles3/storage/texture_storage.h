@@ -412,6 +412,7 @@ struct RenderTarget {
 
 	Color clear_color = Color(1, 1, 1, 1);
 	bool clear_requested = false;
+	Rect2 clear_region = Rect2();
 
 	RenderTarget() {
 	}
@@ -676,7 +677,7 @@ public:
 	GLuint render_target_get_color_type(RID p_render_target) const;
 	uint32_t render_target_get_color_format_size(RID p_render_target) const;
 
-	void render_target_request_clear(RID p_render_target, const Color &p_clear_color) override;
+	void render_target_request_clear(RID p_render_target, const Color &p_clear_color, const Rect2 &p_clear_region = Rect2()) override;
 	bool render_target_is_clear_requested(RID p_render_target) override;
 	Color render_target_get_clear_request_color(RID p_render_target) override;
 	void render_target_disable_clear_request(RID p_render_target) override;

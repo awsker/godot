@@ -371,7 +371,7 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 	Color bgcolor = p_viewport->transparent_bg ? Color(0, 0, 0, 0) : RSG::texture_storage->get_default_clear_color();
 
 	if (p_viewport->clear_mode != RS::VIEWPORT_CLEAR_NEVER) {
-		RSG::texture_storage->render_target_request_clear(p_viewport->render_target, bgcolor);
+		RSG::texture_storage->render_target_request_clear(p_viewport->render_target, bgcolor, p_viewport->clear_region);
 		if (p_viewport->clear_mode == RS::VIEWPORT_CLEAR_ONLY_NEXT_FRAME) {
 			p_viewport->clear_mode = RS::VIEWPORT_CLEAR_NEVER;
 		}
@@ -1115,6 +1115,14 @@ void RendererViewport::viewport_set_clear_mode(RID p_viewport, RS::ViewportClear
 	ERR_FAIL_NULL(viewport);
 
 	viewport->clear_mode = p_clear_mode;
+}
+
+void RendererViewport::viewport_set_clear_region(RID p_viewport, const Rect2 &p_clear_region) {
+	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
+
+	ERR_FAIL_NULL(viewport);
+
+	viewport->clear_region = p_clear_region;
 }
 
 void RendererViewport::viewport_attach_to_screen(RID p_viewport, const Rect2 &p_rect, DisplayServer::WindowID p_screen) {
