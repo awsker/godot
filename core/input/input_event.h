@@ -52,7 +52,7 @@ class Shortcut;
 class InputEvent : public Resource {
 	GDCLASS(InputEvent, Resource);
 
-	int device = 0;
+	int64_t device = 0;
 
 protected:
 	bool canceled = false;
@@ -64,8 +64,8 @@ public:
 	static constexpr int DEVICE_ID_EMULATION = -1;
 	static constexpr int DEVICE_ID_INTERNAL = -2;
 
-	void set_device(int p_device);
-	int get_device() const;
+	void set_device(int64_t p_device);
+	int64_t get_device() const;
 
 	bool is_action(const StringName &p_action, bool p_exact_match = false) const;
 	bool is_action_pressed(const StringName &p_action, bool p_allow_echo = false, bool p_exact_match = false) const;

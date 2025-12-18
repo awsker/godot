@@ -35,12 +35,12 @@
 #include "core/os/keyboard.h"
 #include "core/os/os.h"
 
-void InputEvent::set_device(int p_device) {
+void InputEvent::set_device(int64_t p_device) {
 	device = p_device;
 	emit_changed();
 }
 
-int InputEvent::get_device() const {
+int64_t InputEvent::get_device() const {
 	return device;
 }
 
