@@ -801,6 +801,11 @@ void RendererViewport::draw_viewports(bool p_swap_buffers) {
 				visible = true;
 			}
 
+			if (vp->clear_after_resize) {
+				visible = true;
+				vp->clear_after_resize = false;
+			}
+
 			if (vp->update_mode == RS::VIEWPORT_UPDATE_WHEN_VISIBLE && RSG::texture_storage->render_target_was_used(vp->render_target)) {
 				visible = true;
 			}
@@ -1079,6 +1084,7 @@ void RendererViewport::_viewport_set_size(Viewport *p_viewport, int p_width, int
 		_configure_3d_render_buffers(p_viewport);
 
 		p_viewport->occlusion_buffer_dirty = true;
+		p_viewport->clear_after_resize = true;
 	}
 }
 
