@@ -43,6 +43,7 @@ protected:
 	Rect2 region; // Only for property value.
 	Rect2 rounded_region; // Region with rounded size (image size is always integer).
 	Rect2 margin;
+	Vector2 pivot;
 	bool filter_clip = false;
 
 	static void _bind_methods();
@@ -62,6 +63,9 @@ public:
 
 	void set_margin(const Rect2 &p_margin);
 	Rect2 get_margin() const;
+
+	void set_pivot(const Vector2 &p_pivot);
+	Vector2 get_pivot() const;
 
 	void set_filter_clip(const bool p_enable);
 	bool has_filter_clip() const;
