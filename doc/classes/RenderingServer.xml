@@ -4058,6 +4058,13 @@
 				Sets the clear mode of a viewport.
 			</description>
 		</method>
+		<method name="viewport_set_clear_region">
+			<return type="void" />
+			<param index="0" name="viewport" type="RID" />
+			<param index="1" name="clear_region" type="Rect2" />
+			<description>
+			</description>
+		</method>
 		<method name="viewport_set_debug_draw">
 			<return type="void" />
 			<param index="0" name="viewport" type="RID" />

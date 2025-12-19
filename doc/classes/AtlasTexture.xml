@@ -20,6 +20,8 @@
 		<member name="margin" type="Rect2" setter="set_margin" getter="get_margin" default="Rect2(0, 0, 0, 0)">
 			The margin around the [member region]. Useful for small adjustments. If the [member Rect2.size] of this property ("w" and "h" in the editor) is set, the drawn texture is resized to fit within the margin.
 		</member>
+		<member name="pivot" type="Vector2" setter="set_pivot" getter="get_pivot" default="Vector2(0, 0)">
+		</member>
 		<member name="region" type="Rect2" setter="set_region" getter="get_region" default="Rect2(0, 0, 0, 0)">
 			The region used to draw the [member atlas]. If either dimension of the region's size is [code]0[/code], the value from [member atlas] size will be used for that axis instead.
 			[b]Note:[/b] The image size is always an integer, so the actual region size is rounded down.
