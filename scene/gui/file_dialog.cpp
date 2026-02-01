@@ -95,6 +95,10 @@ bool FileDialog::_can_use_native_popup() const {
 	return DisplayServer::get_singleton()->has_feature(DisplayServer::FEATURE_NATIVE_DIALOG_FILE);
 }
 
+Vector2i FileDialog::_get_list_mode_icon_size() const {
+	return theme_cache.file->get_size();
+}
+
 void FileDialog::_popup_base(const Rect2i &p_screen_rect) {
 #ifdef TOOLS_ENABLED
 	if (is_part_of_edited_scene()) {
@@ -108,6 +112,11 @@ void FileDialog::_popup_base(const Rect2i &p_screen_rect) {
 	} else {
 		ConfirmationDialog::_popup_base(p_screen_rect);
 	}
+}
+
+void FileDialog::_clear_changed_status() {
+	favorites_changed = false;
+	recents_changed = false;
 }
 
 void FileDialog::set_visible(bool p_visible) {
@@ -258,6 +267,8 @@ void FileDialog::_notification(int p_what) {
 				_update_favorite_list();
 				_update_recent_list();
 				invalidate(); // Put it here to preview in the editor.
+			} else {
+				callable_mp(this, &FileDialog::_clear_changed_status).call_deferred();
 			}
 		} break;
 
@@ -359,7 +370,13 @@ void FileDialog::update_dir() {
 			drives->set_item_disabled(-1, true);
 			drives->select(drives->get_item_count() - 1);
 		} else {
-			drives->select(dir_access->get_current_drive());
+			int cur = dir_access->get_current_drive();
+			for (int i = 0; i < drives->get_item_count(); i++) {
+				if (drives->get_item_metadata(i).operator int() == cur) {
+					drives->select(i);
+					break;
+				}
+			}
 		}
 	}
 
@@ -807,12 +824,13 @@ void FileDialog::update_file_list() {
 		file_list->set_max_text_lines(2);
 		file_list->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 		file_list->set_fixed_icon_size(Size2(thumbnail_size, thumbnail_size));
+		file_list->set_fixed_tag_icon_size(_get_list_mode_icon_size());
 	} else {
 		file_list->set_icon_mode(ItemList::ICON_MODE_LEFT);
 		file_list->set_max_columns(1);
 		file_list->set_max_text_lines(1);
 		file_list->set_fixed_column_width(0);
-		file_list->set_fixed_icon_size(theme_cache.file->get_size());
+		file_list->set_fixed_icon_size(_get_list_mode_icon_size());
 	}
 
 	dir_access->list_dir_begin();
@@ -1278,6 +1296,9 @@ String FileDialog::get_current_path() const {
 }
 
 void FileDialog::set_current_dir(const String &p_dir) {
+	if (p_dir.is_relative_path()) {
+		dir_access->change_dir(OS::get_singleton()->get_resource_dir());
+	}
 	_change_dir(p_dir);
 
 	_push_history();
@@ -1322,6 +1343,7 @@ void FileDialog::set_root_subfolder(const String &p_root) {
 		root_prefix = dir_access->get_current_dir();
 	}
 	invalidate();
+	_update_drives();
 	update_dir();
 }
 
@@ -1580,9 +1602,6 @@ void FileDialog::_select_drive(int p_idx) {
 }
 
 void FileDialog::_change_dir(const String &p_new_dir) {
-	if (p_new_dir.is_relative_path()) {
-		dir_access->change_dir(OS::get_singleton()->get_resource_dir());
-	}
 	if (root_prefix.is_empty()) {
 		dir_access->change_dir(p_new_dir);
 	} else {
@@ -1599,8 +1618,22 @@ void FileDialog::_change_dir(const String &p_new_dir) {
 }
 
 void FileDialog::_update_drives(bool p_select) {
+	if (access != ACCESS_FILESYSTEM) {
+		drives->hide();
+		return;
+	}
+
+	HashMap<int, String> drive_map;
 	int dc = dir_access->get_drive_count();
-	if (dc == 0 || access != ACCESS_FILESYSTEM) {
+	int cur = dir_access->get_current_drive();
+	for (int i = 0; i < dc; i++) {
+		String drv = dir_access->get_drive(i);
+		if (!root_prefix.is_empty() && !drv.begins_with(root_prefix)) {
+			continue;
+		}
+		drive_map[i] = drv;
+	}
+	if (drive_map.size() == 0) {
 		drives->hide();
 	} else {
 		drives->clear();
@@ -1612,12 +1645,12 @@ void FileDialog::_update_drives(bool p_select) {
 		dp->add_child(drives);
 		drives->show();
 
-		for (int i = 0; i < dir_access->get_drive_count(); i++) {
-			drives->add_item(dir_access->get_drive(i));
-		}
-
-		if (p_select) {
-			drives->select(dir_access->get_current_drive());
+		for (const KeyValue<int, String> &drv : drive_map) {
+			drives->add_item(drv.value);
+			drives->set_item_metadata(-1, drv.key);
+			if (p_select && drv.key == cur) {
+				drives->select(drives->get_item_count() - 1);
+			}
 		}
 	}
 }
@@ -1659,6 +1692,7 @@ void FileDialog::_favorite_pressed() {
 	} else {
 		global_favorites.push_back(directory);
 	}
+	favorites_changed = true;
 	_update_favorite_list();
 }
 
@@ -1675,6 +1709,7 @@ void FileDialog::_favorite_move_up() {
 		return;
 	}
 	SWAP(global_favorites[a_idx], global_favorites[b_idx]);
+	favorites_changed = true;
 	_update_favorite_list();
 }
 
@@ -1691,6 +1726,7 @@ void FileDialog::_favorite_move_down() {
 		return;
 	}
 	SWAP(global_favorites[a_idx], global_favorites[b_idx]);
+	favorites_changed = true;
 	_update_favorite_list();
 }
 
@@ -1790,6 +1826,7 @@ void FileDialog::_save_to_recent() {
 		}
 	}
 	global_recents.insert(0, directory);
+	recents_changed = true;
 
 	_update_recent_list();
 }
@@ -2152,10 +2189,10 @@ void FileDialog::_bind_methods() {
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, FileDialog, file_disabled_color);
 
 	// TODO: Define own colors?
-	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, FileDialog, icon_normal_color, "font_color", "Button");
-	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, FileDialog, icon_hover_color, "font_hover_color", "Button");
-	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, FileDialog, icon_focus_color, "font_focus_color", "Button");
-	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, FileDialog, icon_pressed_color, "font_pressed_color", "Button");
+	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, FileDialog, icon_normal_color, "icon_color", "Button");
+	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, FileDialog, icon_hover_color, "icon_hover_color", "Button");
+	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, FileDialog, icon_focus_color, "icon_focus_color", "Button");
+	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, FileDialog, icon_pressed_color, "icon_pressed_color", "Button");
 
 	Option defaults;
 
