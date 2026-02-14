@@ -1732,6 +1732,19 @@ void Node::add_sibling(RequiredParam<Node> rp_sibling, bool p_force_readable_nam
 	data.parent->_move_child(p_sibling, get_index() + 1);
 }
 
+void Node::remove_child_at(int i, bool p_include_internal) {
+	remove_child(get_child(i, p_include_internal));
+}
+
+void Node::clear_children() {
+	ERR_FAIL_COND_MSG(data.tree && !Thread::is_main_thread(), "Removing children from a node inside the SceneTree is only allowed from the main thread. Use call_deferred(\"remove_child\",node).");
+	ERR_FAIL_COND_MSG(data.blocked > 0, "Parent node is busy adding/removing children, `remove_child()` can't be called at this time. Consider using `remove_child.call_deferred(child)` instead.");
+
+	while (get_child_count() > 0) {
+		remove_child(get_child(-1));
+	}
+}
+
 void Node::remove_child(RequiredParam<Node> rp_child) {
 	ERR_FAIL_COND_MSG(data.tree && !Thread::is_main_thread(), "Removing children from a node inside the SceneTree is only allowed from the main thread. Use call_deferred(\"remove_child\",node).");
 	EXTRACT_PARAM_OR_FAIL(p_child, rp_child);
@@ -3764,6 +3777,8 @@ void Node::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_name"), &Node::get_name);
 	ClassDB::bind_method(D_METHOD("add_child", "node", "force_readable_name", "internal"), &Node::add_child, DEFVAL(false), DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("remove_child", "node"), &Node::remove_child);
+	ClassDB::bind_method(D_METHOD("remove_child_at", "idx", "include_internal"), &Node::remove_child_at, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("clear_children"), &Node::clear_children);
 	ClassDB::bind_method(D_METHOD("reparent", "new_parent", "keep_global_transform"), &Node::reparent, DEFVAL(true));
 	ClassDB::bind_method(D_METHOD("get_child_count", "include_internal"), &Node::get_child_count, DEFVAL(false)); // Note that the default value bound for include_internal is false, while the method is declared with true. This is because internal nodes are irrelevant for GDSCript.
 	ClassDB::bind_method(D_METHOD("get_children", "include_internal"), &Node::get_children, DEFVAL(false));
