@@ -33,7 +33,6 @@
 #include "core/config/project_settings.h"
 #include "core/input/input.h"
 #include "core/input/input_map.h"
-#include "core/math/geometry_3d.h"
 #include "core/math/math_funcs.h"
 #include "core/math/projection.h"
 #include "core/os/keyboard.h"
